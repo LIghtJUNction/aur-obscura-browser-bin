@@ -1,0 +1,39 @@
+name: Publish AUR package
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: aur-obscura-browser-bin
+  cancel-in-progress: false
+
+jobs:
+  aur-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+
+      - name: Publish AUR package
+        uses: KSXGitHub/github-actions-deploy-aur@v4.1.3
+        with:
+          pkgname: obscura-browser-bin
+          pkgbuild: aur/obscura-browser-bin/PKGBUILD
+          test: true
+          test_flags: --clean --cleanbuild --nodeps
+          commit_username: LIghtJUNction
+          commit_email: LIghtJUNction@users.noreply.github.com
+          ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+          commit_message: Update obscura-browser-bin
+          post_process: if ! git diff --quiet || ! git diff --cached --quiet; then git stash push -u && git switch -C master origin/master && git stash pop; else git switch -C master origin/master; fi
+          ssh_keyscan_types: rsa,ecdsa,ed25519

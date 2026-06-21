@@ -1,0 +1,3 @@
+[submodule "aur/obscura-browser-bin"]
+	path = aur/obscura-browser-bin
+	url = https://aur.archlinux.org/obscura-browser-bin.git
