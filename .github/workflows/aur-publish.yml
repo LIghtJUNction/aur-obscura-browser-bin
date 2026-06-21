@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+  schedule:
+    - cron: "0 */6 * * *"
   workflow_dispatch:
 
 permissions:
@@ -29,11 +31,16 @@ jobs:
         with:
           pkgname: obscura-browser-bin
           pkgbuild: aur/obscura-browser-bin/PKGBUILD
-          test: true
-          test_flags: --clean --cleanbuild --nodeps
+          assets: |
+            aur/obscura-browser-bin/update.sh
+          test: false
           commit_username: LIghtJUNction
           commit_email: LIghtJUNction@users.noreply.github.com
           ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
           commit_message: Update obscura-browser-bin
-          post_process: if ! git diff --quiet || ! git diff --cached --quiet; then git stash push -u && git switch -C master origin/master && git stash pop; else git switch -C master origin/master; fi
+          post_process: |
+            sudo pacman -Sy --noconfirm jq
+            chmod +x update.sh
+            ./update.sh
+            makepkg --clean --cleanbuild --nodeps --noconfirm
           ssh_keyscan_types: rsa,ecdsa,ed25519
