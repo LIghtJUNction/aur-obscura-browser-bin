@@ -43,4 +43,5 @@ jobs:
             chmod +x update.sh
             ./update.sh
             makepkg --clean --cleanbuild --nodeps --noconfirm
+            rm -rf src pkg LICENSE-* obscura-*.tar.gz *.pkg.tar.*
           ssh_keyscan_types: rsa,ecdsa,ed25519
